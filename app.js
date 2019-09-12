@@ -30,7 +30,7 @@ app.get("/delete/:filename", (req, res) => {
 });
 app.post("/save", (req, res) => {
 	var regData = req.body.data;
-	if (regData.label && regData.data) {
+	if (req.body.label && regData) {
 		var data = [];
 		console.log(regData);
 		try {
