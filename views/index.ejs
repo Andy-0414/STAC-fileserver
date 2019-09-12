@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<title>STAC-fileserver</title>
+		<style>
+			* {
+				margin: 0;
+				padding: 0;
+
+				box-sizing: border-box;
+			}
+			#folder {
+				display: flex;
+				flex-wrap: wrap;
+			}
+			.file {
+				position: relative;
+
+				width: 300px;
+				height: 100px;
+
+				display: flex;
+				justify-content: center;
+				align-items: center;
+
+				border: 3px solid #eeeeee;
+				border-radius: 10px;
+				margin: 20px;
+				padding: 10px;
+
+				font-size: 1.5em;
+				color: black;
+
+
+				overflow: hidden;
+				transition: 0.2s;
+			}
+            .file a{
+				text-decoration: none;
+				word-wrap: break-word;
+				word-break: break-all;
+            }
+			.file:hover {
+				border: 3px solid #333333;
+			}
+			.file__delete {
+				position: absolute;
+				left: 10px;
+				top: 10px;
+
+				font-size: 0.8em;
+				color: red;
+
+				transition: 0.5s;
+				padding: 5px;
+				transition: 0.2s;
+				z-index: 10;
+			}
+			.file__delete:hover {
+				background-color: red;
+				color: white;
+				z-index: 10;
+			}
+		</style>
+	</head>
+	<body>
+		<div id="folder">
+			<% for(let i = 0; i < files.length;i++){ %>
+			<div class="file"><a href="/<%= files[i] %>"><%= files[i] %></a> <a class="file__delete" href="/delete/<%= files[i] %>">DELETE</a></div>
+			<% } %>
+		</div>
+	</body>
+</html>
