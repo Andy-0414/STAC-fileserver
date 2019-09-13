@@ -32,12 +32,12 @@ app.get("/", (req, res) => {
 			});
 		});
 	});
-});
+}); 
 app.get("/upload", (req, res) => {
 	res.render("upload");
 });
-app.get("/delete/:filename", (req, res) => {
-	fs.unlink(`data/${req.params.filename}`, err => {
+app.get("/delete/:dir/:filename", (req, res) => {
+	fs.unlink(`${req.params.dir}/${req.params.filename}`, err => {
 		if (err) res.status(500).send({ result: false });
 		res.redirect("/");
 	});

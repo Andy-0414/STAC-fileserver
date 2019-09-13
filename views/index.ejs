@@ -72,13 +72,13 @@
         <h1>DATA/</h1>
 		<div id="folder">
 			<% for(let i = 0; i < files.length;i++){ %>
-			<div class="file"><a href="/<%= files[i] %>"><%= files[i] %></a> <a class="file__delete" href="/delete/<%= files[i] %>">DEL</a></div>
+			<div class="file"><a href="/<%= files[i] %>"><%= files[i] %></a> <a class="file__delete" href="/delete/data/<%= files[i] %>">DEL</a></div>
 			<% } %>
         </div>
         <h1>PUBLIC/</h1>
         <div id="folder">
 			<% for(let i = 0; i < files2.length;i++){ %>
-			<div class="file"><a href="/<%= files2[i] %>"><%= files2[i] %></a> <a class="file__delete" href="/delete/<%= files2[i] %>">DEL</a></div>
+			<div class="file"><a href="/<%= files2[i] %>"><%= files2[i] %></a> <a class="file__delete" href="/delete/public/<%= files2[i] %>">DEL</a></div>
 			<% } %>
 		</div>
 	</body>
