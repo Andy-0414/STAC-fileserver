@@ -4,6 +4,8 @@ const app = express();
 const fs = require("fs");
 const csv = require("json2csv");
 const moment = require("moment");
+const multer = require("multer");
+
 require("moment-timezone");
 moment.tz.setDefault("Asia/Seoul");
 
@@ -13,14 +15,26 @@ app.set("views", "./views");
 app.use(express.urlencoded());
 app.use(express.json());
 app.use(express.static("data"));
+app.use(express.static("public"));
+
+const upload = multer({
+	dest: "public/"
+});
 
 app.get("/", (req, res) => {
 	fs.readdir("data/", (err, files) => {
 		if (err) res.status(500).send({ result: false });
-		res.render("index", {
-			files
+		fs.readdir("public/", (err, files2) => {
+			if (err) res.status(500).send({ result: false });
+			res.render("index", {
+				files,
+				files2
+			});
 		});
 	});
+});
+app.get("/upload", (req, res) => {
+	res.render("upload");
 });
 app.get("/delete/:filename", (req, res) => {
 	fs.unlink(`data/${req.params.filename}`, err => {
@@ -47,7 +61,7 @@ app.post("/save", (req, res) => {
 			});
 			data.push(tmp);
 		}
-
+		data[0].label = req.body.label;
 		fs.writeFile(`data/${dateStr}.csv`, csv.parse(data), err => {
 			if (err) {
 				console.log("FAIL");
@@ -67,7 +81,12 @@ app.post("/save", (req, res) => {
 	}
 });
 
-app.get("/:filename", (req, res) => {
-	res.redirect("/");
+app.post("/filesave", upload.single("file"), (req, res) => {
+	var file = req.file;
+	res.send({
+		name: file.filename,
+		originalName: file.originalname,
+		size: file.size
+	});
 });
 app.listen(3000);
