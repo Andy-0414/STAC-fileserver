@@ -83,10 +83,17 @@ app.post("/save", (req, res) => {
 
 app.post("/filesave", upload.single("file"), (req, res) => {
 	var file = req.file;
-	res.send({
-		name: file.filename,
-		originalName: file.originalname,
-		size: file.size
-	});
+	if (file) {
+        console.log(file)
+		res.send({
+			originalName: file.originalname,
+			size: file.size
+		});
+	} else {
+		res.send({
+			result: false,
+			message: "잘못된 요청"
+		});
+	}
 });
 app.listen(3000);
