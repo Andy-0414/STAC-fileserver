@@ -12,8 +12,8 @@ moment.tz.setDefault("Asia/Seoul");
 app.set("view engine", "ejs");
 app.set("views", "./views");
 
-app.use(express.urlencoded());
-app.use(express.json());
+app.use(express.json({ limit: "50mb" }));
+app.use(express.urlencoded({ limit: "50mb" }));
 app.use(express.static("data"));
 app.use(express.static("public"));
 
@@ -32,7 +32,7 @@ app.get("/", (req, res) => {
 			});
 		});
 	});
-}); 
+});
 app.get("/upload", (req, res) => {
 	res.render("upload");
 });
