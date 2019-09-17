@@ -5,6 +5,7 @@ const fs = require("fs");
 const csv = require("json2csv");
 const moment = require("moment");
 const multer = require("multer");
+const archiver = require("archiver");
 
 require("moment-timezone");
 moment.tz.setDefault("Asia/Seoul");
@@ -84,16 +85,36 @@ app.post("/save", (req, res) => {
 app.post("/filesave", upload.single("file"), (req, res) => {
 	var file = req.file;
 	if (file) {
-        console.log(file)
+		console.log(file);
 		res.send({
 			originalName: file.originalname,
 			size: file.size
 		});
 	} else {
-		res.send({
+		res.status(400).send({
 			result: false,
 			message: "잘못된 요청"
 		});
 	}
+});
+app.get("/downloadAll", (req, res) => {
+	var archive = archiver("zip", {
+		zlib: { level: 9 } // Sets the compression level.
+	});
+    var output = fs.createWriteStream("public/data.zip");
+	output.on("close", function() {
+        archive.end();
+        output.end();
+		res.sendfile("./public/data.zip");
+	});
+	output.on("close", function() {
+        console.log("DownloadAll")
+	});
+	archive.on("error", function(err) {
+		throw err;
+	});
+	archive.pipe(output);
+	archive.directory("data/", false);
+	archive.finalize();
 });
 app.listen(3000);
