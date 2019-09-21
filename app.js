@@ -46,35 +46,41 @@ app.get("/delete/:dir/:filename", (req, res) => {
 app.post("/save", (req, res) => {
 	var regData = req.body.data;
 	if (req.body.label && regData) {
-		var data = [];
-		console.log(regData);
-		try {
-			fs.mkdirSync("data");
-		} catch (e) {
-			if (e.code != "EEXIST") throw e;
-		}
-		var dateStr = moment().format("YYYY-MM-DDTHH-mm-ss");
-		dateStr = dateStr.replace(/:/gi, "-") + "__" + req.body.label;
-		for (let i = 0; i < regData[Object.keys(regData)[0]].length; i++) {
-			let tmp = {};
-			Object.keys(regData).map(key => {
-				tmp[key] = regData[key][i];
-			});
-			data.push(tmp);
-		}
-		data[0].label = req.body.label;
-		fs.writeFile(`data/${dateStr}.csv`, csv.parse(data), err => {
-			if (err) {
-				console.log("FAIL");
-				res.status(500)
-					.send({ result: false, message: "저장 중 에러" })
-					.end();
+		if (regData[Object.keys(regData)[0]].length == 30) {
+			var data = [];
+			console.log(regData);
+			try {
+				fs.mkdirSync("data");
+			} catch (e) {
+				if (e.code != "EEXIST") throw e;
 			}
-			console.log("CLEAR");
-			res.status(200)
-				.send({ result: true, message: "성공" })
+			var dateStr = moment().format("YYYY-MM-DDTHH-mm-ss");
+			dateStr = dateStr.replace(/:/gi, "-") + "__" + req.body.label;
+			for (let i = 0; i < regData[Object.keys(regData)[0]].length; i++) {
+				let tmp = {};
+				Object.keys(regData).map(key => {
+					tmp[key] = regData[key][i];
+				});
+				data.push(tmp);
+			}
+			data[0].label = req.body.label;
+			fs.writeFile(`data/${dateStr}.csv`, csv.parse(data), err => {
+				if (err) {
+					console.log("FAIL");
+					res.status(500)
+						.send({ result: false, message: "저장 중 에러" })
+						.end();
+				}
+				console.log("CLEAR");
+				res.status(200)
+					.send({ result: true, message: "성공" })
+					.end();
+			});
+		} else {
+			res.status(401)
+				.send({ result: false, message: "데이터 누락" })
 				.end();
-		});
+		}
 	} else {
 		res.status(400)
 			.send({ result: false, message: "잘못된 요청" })
@@ -101,14 +107,14 @@ app.get("/downloadAll", (req, res) => {
 	var archive = archiver("zip", {
 		zlib: { level: 9 } // Sets the compression level.
 	});
-    var output = fs.createWriteStream("public/data.zip");
+	var output = fs.createWriteStream("public/data.zip");
 	output.on("close", function() {
-        archive.end();
-        output.end();
+		archive.end();
+		output.end();
 		res.sendfile("./public/data.zip");
 	});
 	output.on("close", function() {
-        console.log("DownloadAll")
+		console.log("DownloadAll");
 	});
 	archive.on("error", function(err) {
 		throw err;
