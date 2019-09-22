@@ -6,6 +6,7 @@ const csv = require("json2csv");
 const moment = require("moment");
 const multer = require("multer");
 const archiver = require("archiver");
+const crypto = require("crypto");
 
 require("moment-timezone");
 moment.tz.setDefault("Asia/Seoul");
@@ -88,20 +89,17 @@ app.post("/save", (req, res) => {
 	}
 });
 
-app.post("/filesave", upload.single("file"), (req, res) => {
-    var file = req.file;
-	if (file) {
-		console.log(file);
+app.post("/filesave", (req, res) => {
+	var imageBuffer = new Buffer(req.body.imgfile, "base64");
+	let randStr = "test";
+	fs.writeFile(`public/${randStr}.jpg`, imageBuffer, err => {
+		if (err) res.status(400).send(err);
+		console.log(randStr + ".jpg");
 		res.send({
-			originalName: file.originalname,
-			size: file.size
+			result: true,
+			filename: randStr + ".jpg"
 		});
-	} else {
-		res.status(400).send({
-			result: false,
-			message: "잘못된 요청"
-		});
-	}
+	});
 });
 app.get("/downloadAll", (req, res) => {
 	var archive = archiver("zip", {
